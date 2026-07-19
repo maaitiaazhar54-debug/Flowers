@@ -1,1 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق تأجير السيارات</title>
+    <style>
+        /* --- CSS: التنسيق والتصميم --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: #1a2a3a;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #666;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* شريط البحث والتصفية */
+        .filter-section {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .filter-section input, .filter-section select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* شبكة عرض السيارات */
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .car-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #e9ecef;
+        }
+
+        .car-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .car-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a2a3a;
+            margin-bottom: 5px;
+        }
+
+        .car-category {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        .car-price {
+            font-size: 16px;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-rent {
+            margin-top: auto;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        .btn-rent:hover {
+            background-color: #0056b3;
+        }
+
+        /* نافذة الحجز (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: #1a2a3a;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-content input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .btn-confirm {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-confirm:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🚗 تطبيق كراء السيارات</h1>
+            <p>اختر سيارتك المفضلة واحجزها بخطوة واحدة</p>
+        </header>
+
+        <!-- أدوات البحث والتصفية -->
+        <div class="filter-section">
+            <input type="text" id="searchInput" placeholder="ابحث باسم السيارة..." oninput="filterCars()">
+            <select id="categoryFilter" onchange="filterCars()">
+                <option value="all">جميع الفئات</option>
+                <option value="اقتصادية">اقتصادية</option>
+                <option value="عائلية">عائلية</option>
+                <option value="فاخرة">فاخرة</option>
+            </select>
+        </div>
+
+        <!-- قائمة عرض السيارات -->
+        <div class="cars-grid" id="carsContainer">
+            <!-- يتم إضافة السيارات هنا عبر JavaScript -->
+        </div>
+    </div>
+
+    <!-- نافذة تأكيد الحجز -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle">تأكيد حجز السيارة</h3>
+            <form id="bookingForm" onsubmit="confirmBooking(event)">
+                <input type="text" id="custName" placeholder="الاسم الكامل" required>
+                <input type="tel" id="custPhone" placeholder="رقم الهاتف" required>
+                <label style="font-size: 12px; color: #555;">تاريخ الاستلام:</label>
+                <input type="date" id="rentDate" required>
+                <button type="submit" class="btn-confirm">تأكيد الطلب</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT: المنطق والبيانات ---
+
+        // قائمة السيارات المتاحة
+        const cars = [
+            { id: 1, name: "هيونداي إكسنت", category: "اقتصادية", price: 4000, image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, name: "تويوتا راف 4", category: "عائلية", price: 8000, image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, name: "مرسيدس C-Class", category: "فاخرة", price: 15000, image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, name: "كيا سيراتو", category: "اقتصادية", price: 4500, image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=500&q=80" },
+            { id: 5, name: "بي إم دبليو X5", category: "فاخرة", price: 18000, image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        let selectedCar = null;
+
+        // دالة عرض السيارات في الصفحة
+        function displayCars(carList) {
+            const container = document.getElementById('carsContainer');
+            container.innerHTML = '';
+
+            if(carList.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777;">لا توجد سيارات مطابقة للبحث.</p>';
+                return;
+            }
+
+            carList.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                card.innerHTML = `
+                    <img src="${car.image}" alt="${car.name}" class="car-image">
+                    <div class="car-info">
+                        <div class="car-title">${car.name}</div>
+                        <div class="car-category">الفئة: ${car.category}</div>
+                        <div class="car-price">${car.price} د.ج / اليوم</div>
+                        <button class="btn-rent" onclick="openModal('${car.name}')">احجز الآن</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // دالة التصفية والبحث
+        function filterCars() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const categoryVal = document.getElementById('categoryFilter').value;
+
+            const filtered = cars.filter(car => {
+                const matchesSearch = car.name.toLowerCase().includes(searchVal);
+                const matchesCategory = categoryVal === 'all' || car.category === categoryVal;
+                return matchesSearch && matchesCategory;
+            });
+
+            displayCars(filtered);
+        }
+
+        // فتح نافذة الحجز
+        function openModal(carName) {
+            selectedCar = carName;
+            document.getElementById('modalTitle').innerText = `حجز سيارة: ${carName}`;
+            document.getElementById('bookingModal').style.display = 'flex';
+        }
+
+        // إغلاق نافذة الحجز
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        // تأكيد الحجز
+        function confirmBooking(event) {
+            event.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const date = document.getElementById('rentDate').value;
+
+            alert(`شكراً لك يا ${name}!\nتم إرسال طلب حجز (${selectedCar}) بنجاح لتاريخ ${date}.\nسنتصل بك على الرقم: ${phone}`);
+            
+            closeModal();
+            document.getElementById('bookingForm').reset();
+        }
+
+        // عرض السيارات عند تحميل الصفحة لأول مرة
+        displayCars(cars);
+    </script>
+</body>
+</html>
